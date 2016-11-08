@@ -106,7 +106,7 @@ public class Test {
 		vi.run();
 		System.out.println(vi);
 
-		vi = new ValueIteration(randomMDP, 0.5);
+		vi = new ValueIteration(randomMDP, 0.75);
 		vi.run();
 		System.out.println(vi);
 
