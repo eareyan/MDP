@@ -30,6 +30,11 @@ public class ValueIteration {
 	private Map<State, Double> V;
 	
 	/**
+	 * This map stores the deterministic greedy policy.
+	 */
+	private Map<State, Action> policy;
+	
+	/**
 	 * Tolerance parameter.
 	 */
 	private static double tolerance = 0.0001;
@@ -66,21 +71,12 @@ public class ValueIteration {
 			convergence = true;
 			// For each state of the MDP.
 			for (State state : this.mdp.getStates()) {
-				double maxSum = Double.NEGATIVE_INFINITY;
-				// Compute the value of the action with the highest expected reward.
-				for (Action action : this.mdp.getActions()) {
-					double sum = 0.0;
-					for(State sprime : this.mdp.getStates()) {
-						sum += this.mdp.getTransition(state, sprime, action) * (this.mdp.getReward(state, sprime, action) + this.gamma * this.V.get(sprime));
-					}
-					if(sum > maxSum) {
-						maxSum = sum;
-					}
-				}
+				// Compute the action (and its value) that is maximal from current state.
+				ActionValueTuple actionValueTuple = this.getArgMaxActionFromState(state);
 				// Current Value
 				double currentV = this.V.get(state);
 				// Update the V value.
-				this.V.put(state, maxSum);
+				this.V.put(state, actionValueTuple.getValue());
 				// If the difference between V values is greater than tolerance, then we have not converged.
 				if(convergence && (Math.abs(currentV - this.V.get(state)) > ValueIteration.tolerance)){
 					convergence = false;
@@ -89,6 +85,70 @@ public class ValueIteration {
 			i++;
 		}
 		System.out.println("Number of iters = " + i);
+	}
+	
+	/**
+	 * Computes the action that has maximal expected value from the current state.
+	 * 
+	 * @param state
+	 * @return the action that has maximal expected value from the current state.
+	 */
+	private ActionValueTuple getArgMaxActionFromState(State state){
+		double maxSum = Double.NEGATIVE_INFINITY;
+		ActionValueTuple tuple = null;
+		// Compute the value of the action with the highest expected reward.
+		for (Action action : this.mdp.getActions()) {
+			double sum = 0.0;
+			for(State sprime : this.mdp.getStates()) {
+				sum += this.mdp.getTransition(state, sprime, action) * (this.mdp.getReward(state, sprime, action) + this.gamma * this.V.get(sprime));
+			}
+			if(sum > maxSum) {
+				maxSum = sum;
+				tuple = new ActionValueTuple(action, maxSum);
+			}
+		}
+		return tuple;
+	}
+	
+	/**
+	 * Returns the deterministic greedy policy with respect to the value
+	 * function already computed.
+	 * 
+	 * @return a policy, i.e., a map from states to actions.
+	 */
+	public Map<State, Action> getPolicy() {
+		if(this.policy == null) {
+			this.policy = new HashMap<State, Action>();
+			for (State state : this.mdp.getStates()) {
+				this.policy.put(state, this.getArgMaxActionFromState(state).getAction());
+			}
+		}
+		return this.policy;
+	}
+	
+	/**
+	 * A helper class. Represents a tuple (action, value).
+	 * 
+	 * @author Enrique Areyan Viqueira
+	 */
+	private class ActionValueTuple{
+		
+		private final Action action;
+		
+		private final double value;
+		
+		public ActionValueTuple(Action action, double value) {
+			this.action = action;
+			this.value = value;
+		}
+		
+		public Action getAction() {
+			return this.action;
+		}
+		
+		public double getValue() {
+			return this.value;
+		}
 	}
 
 	@Override

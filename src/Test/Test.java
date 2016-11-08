@@ -11,6 +11,7 @@ import MDP.State;
 import MDP.exceptions.MDPException;
 import algorithms.ValueIteration;
 import sample.RandomMDP;
+import sample.SampleMDP;
 
 /**
  * Testing class
@@ -47,6 +48,7 @@ public class Test {
 				transition.put(sFrom, a, t);			
 				}
 		}*/
+		
 		HashBasedTable<State, Action, Map<State, Double>> transition = HashBasedTable.create();
 		
 		HashMap<State, Double> t = new HashMap<State, Double>();
@@ -72,7 +74,8 @@ public class Test {
 				rewards.put(sFrom, a, r);			
 				}
 		}*/
-		/*HashBasedTable<State, Action, Map<State, Double>> rewards = HashBasedTable.create();
+		
+		HashBasedTable<State, Action, Map<State, Double>> rewards = HashBasedTable.create();
 		
 		HashMap<State, Double> r = new HashMap<State, Double>();
 		r.put(s1, 0.35);
@@ -82,7 +85,7 @@ public class Test {
 		HashMap<State, Double> r2 = new HashMap<State, Double>();
 		r2.put(s1, 0.77);
 		r2.put(s2, 0.44);
-		rewards.put(s2, a1, r2);	
+		rewards.put(s2, a1, r2);
 
 		MDP testMDP = new MDP(states, actions, transition, rewards);
 		System.out.println(testMDP.getReward(s1, s2, a1));
@@ -90,25 +93,31 @@ public class Test {
 		
 		System.out.println("testMDP = " + testMDP);
 		
-		ValueIteration vi = new ValueIteration(testMDP, 0);
+		SampleMDP.sampleTrajectory(testMDP, 2);
+		
+		ValueIteration vi = new ValueIteration(testMDP, 0.75);
 		
 		System.out.println(vi);
 		vi.run();
 		System.out.println(vi);
 		System.out.println("----");
+		System.out.println(vi.getPolicy());
+		
+		
 		double[] x = RandomMDP.createDistribution();
 		for(double y : x){
 			System.out.println(y);
-		}*/
+		}
 		MDP randomMDP = RandomMDP.sample();
 		System.out.println("----\n" + randomMDP);
-		ValueIteration vi = new ValueIteration(randomMDP, 0.99);
-		vi.run();
-		System.out.println(vi);
+		ValueIteration viOnRandomMDP = new ValueIteration(randomMDP, 0.99);
+		viOnRandomMDP.run();
+		System.out.println(viOnRandomMDP);
 
-		vi = new ValueIteration(randomMDP, 0.75);
-		vi.run();
-		System.out.println(vi);
+		viOnRandomMDP = new ValueIteration(randomMDP, 0.75);
+		viOnRandomMDP.run();
+		System.out.println(viOnRandomMDP);
+		System.out.println(viOnRandomMDP.getPolicy());
 
 	}
 }

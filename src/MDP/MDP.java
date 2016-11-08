@@ -110,6 +110,15 @@ public class MDP {
 	public Set<Action> getActions() {
 		return this.actions;
 	}
+	
+	/**
+	 * Returns the transition table.
+	 * 
+	 * @return the transition table.
+	 */
+	public Table<State, Action, Map<State, Double>> getTransitionTable() {
+		return this.transition;
+	}
 
 	@Override
 	public String toString() {
