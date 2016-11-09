@@ -53,38 +53,40 @@ public class ValueIteration {
 	public ValueIteration(MDP mdp, double gamma) {
 		this.mdp = mdp;
 		this.gamma = gamma;
-		this.V = new HashMap<State, Double>();
-		// Initialize the value function to 0.0
-		for (State s : this.mdp.getStates()) {
-			this.V.put(s, 0.0);
-		}
 	}
 
 	/**
-	 * Implements VI in this MDP.
+	 * Implements VI in this MDP. Implements singleton.
 	 */
 	public void run() {
-		int i = 0;
-		boolean convergence = false;
-		// Convergence criteria are: (1) number of iterations and (2) difference of absolute values.
-		while (i < maxIter && !convergence) {
-			convergence = true;
-			// For each state of the MDP.
-			for (State state : this.mdp.getStates()) {
-				// Compute the action (and its value) that is maximal from current state.
-				ActionValueTuple actionValueTuple = this.getArgMaxActionFromState(state);
-				// Current Value
-				double currentV = this.V.get(state);
-				// Update the V value.
-				this.V.put(state, actionValueTuple.getValue());
-				// If the difference between V values is greater than tolerance, then we have not converged.
-				if(convergence && (Math.abs(currentV - this.V.get(state)) > ValueIteration.tolerance)){
-					convergence = false;
-				}
+		if(this.V == null) {
+			this.V = new HashMap<State, Double>();
+			// Initialize the value function to 0.0
+			for (State s : this.mdp.getStates()) {
+				this.V.put(s, 0.0);
 			}
-			i++;
+			int i = 0;
+			boolean convergence = false;
+			// Convergence criteria are: (1) number of iterations and (2) difference of absolute values.
+			while (i < maxIter && !convergence) {
+				convergence = true;
+				// For each state of the MDP.
+				for (State state : this.mdp.getStates()) {
+					// Compute the action (and its value) that is maximal from current state.
+					ActionValueTuple actionValueTuple = this.getArgMaxActionFromState(state);
+					// Current Value
+					double currentV = this.V.get(state);
+					// Update the V value.
+					this.V.put(state, actionValueTuple.getValue());
+					// If the difference between V values is greater than tolerance, then we have not converged.
+					if(convergence && (Math.abs(currentV - this.V.get(state)) > ValueIteration.tolerance)){
+						convergence = false;
+					}
+				}
+				i++;
+			}
+			System.out.println("Number of iters = " + i);
 		}
-		System.out.println("Number of iters = " + i);
 	}
 	
 	/**

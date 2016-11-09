@@ -9,6 +9,7 @@ import MDP.Action;
 import MDP.MDP;
 import MDP.State;
 import MDP.exceptions.MDPException;
+import algorithms.PolicyEvaluation;
 import algorithms.ValueIteration;
 import sample.RandomMDP;
 import sample.SampleMDP;
@@ -97,27 +98,26 @@ public class Test {
 		
 		ValueIteration vi = new ValueIteration(testMDP, 0.75);
 		
-		System.out.println(vi);
 		vi.run();
 		System.out.println(vi);
 		System.out.println("----");
 		System.out.println(vi.getPolicy());
 		
 		
-		double[] x = RandomMDP.createDistribution();
-		for(double y : x){
-			System.out.println(y);
-		}
 		MDP randomMDP = RandomMDP.sample();
 		System.out.println("----\n" + randomMDP);
 		ValueIteration viOnRandomMDP = new ValueIteration(randomMDP, 0.99);
 		viOnRandomMDP.run();
 		System.out.println(viOnRandomMDP);
 
-		viOnRandomMDP = new ValueIteration(randomMDP, 0.75);
+		viOnRandomMDP = new ValueIteration(randomMDP, 0.25);
 		viOnRandomMDP.run();
 		System.out.println(viOnRandomMDP);
 		System.out.println(viOnRandomMDP.getPolicy());
+		
+		PolicyEvaluation policyEvaluation = new PolicyEvaluation(randomMDP, 0.99, viOnRandomMDP.getPolicy());
+		policyEvaluation.run();
+		System.out.println("policyEvaluation = " + policyEvaluation);
 
 	}
 }
