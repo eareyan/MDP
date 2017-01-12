@@ -1,0 +1,1 @@
+A simple framework for representing and solving MDPs (Markov Decision Processes).
